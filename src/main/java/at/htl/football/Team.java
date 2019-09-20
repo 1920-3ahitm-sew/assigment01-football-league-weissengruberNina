@@ -1,10 +1,11 @@
 package at.htl.football;
 
-public class Team {
+public class Team implements Comparable{
     private String name;
     private int points;
     private int wins;
     private int draws;
+    private int lost;
     private int defeats;
     private int goalsShot;
     private int goalsRecived;
@@ -13,8 +14,38 @@ public class Team {
         name = this.name;
     }
 
-    public void addMatch(Match match){
+    public Team() {
 
+    }
+
+    public void addMatch(Match match) {
+        if (this.getName().equals(match.getHomeName())) {
+            if (match.getHomeGoals() > match.getGuestGoals()) {
+                points += 3;
+                wins += 1;
+            } else if (match.getHomeGoals() == match.getGuestGoals()) {
+                points += 1;
+                draws += 1;
+            } else {
+                lost += 1;
+                defeats += 1;
+            }
+            goalsShot += match.getHomeGoals();
+            goalsRecived+= match.getGuestGoals();
+        } else if (this.getName().equals(match.getGuestName())) {
+            if (match.getGuestGoals() > match.getHomeGoals()) {
+                points += 3;
+                wins += 1;
+            } else if (match.getGuestGoals() == match.getHomeGoals()) {
+                points += 1;
+                draws += 1;
+            } else {
+                lost += 1;
+                defeats += 1;
+            }
+            goalsShot += match.getGuestGoals();
+            goalsRecived += match.getHomeGoals();
+        }
     }
 
     public String getName() {
@@ -41,18 +72,24 @@ public class Team {
         return goalsShot;
     }
 
+    public int getLost() {
+        return lost;
+    }
+
     public int getGoalsRecived() {
         return goalsRecived;
     }
 
     public int getGoalDifference(){
         int goalDifference;
+        goalDifference = this.goalsShot - this.goalsRecived;
 
-        return 0;
+        return goalDifference;
     }
 
-    public int compareTo(Team team){
-        return 0;
+    public int compareTo(Object o){
+        Team otherTeam = (Team) o;
+        return otherTeam.points - this.points;
     }
 
 }
