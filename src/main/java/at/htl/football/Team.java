@@ -1,6 +1,6 @@
 package at.htl.football;
 
-public class Team implements Comparable{
+public class Team implements Comparable<Team>{
     private String name;
     private int points;
     private int wins;
@@ -8,43 +8,43 @@ public class Team implements Comparable{
     private int lost;
     private int defeats;
     private int goalsShot;
-    private int goalsRecived;
+    private int goalsReceived;
 
     Team(String name) {
-        name = this.name;
-    }
-
-    public Team() {
-
+        this.name = name;
     }
 
     public void addMatch(Match match) {
-        if (this.getName().equals(match.getHomeName())) {
-            if (match.getHomeGoals() > match.getGuestGoals()) {
-                points += 3;
-                wins += 1;
-            } else if (match.getHomeGoals() == match.getGuestGoals()) {
-                points += 1;
-                draws += 1;
-            } else {
-                lost += 1;
-                defeats += 1;
-            }
+        if (match.getHomeName().equals(name)) {
+            points += match.getHomePoints();
             goalsShot += match.getHomeGoals();
-            goalsRecived+= match.getGuestGoals();
-        } else if (this.getName().equals(match.getGuestName())) {
-            if (match.getGuestGoals() > match.getHomeGoals()) {
-                points += 3;
-                wins += 1;
-            } else if (match.getGuestGoals() == match.getHomeGoals()) {
-                points += 1;
-                draws += 1;
-            } else {
-                lost += 1;
-                defeats += 1;
+            goalsReceived += match.getGuestGoals();
+
+            switch (match.getHomePoints()) {
+                case 3:
+                    wins++;
+                    break;
+                case 1:
+                    draws++;
+                    break;
+                case 0:
+                    defeats++;
             }
+        } else if (match.getGuestName().equals(name)) {
+            points += match.getGuestPoints();
             goalsShot += match.getGuestGoals();
-            goalsRecived += match.getHomeGoals();
+            goalsReceived += match.getHomeGoals();
+
+            switch (match.getGuestPoints()) {
+                case 3:
+                    wins++;
+                    break;
+                case 1:
+                    draws++;
+                    break;
+                case 0:
+                    defeats++;
+            }
         }
     }
 
@@ -77,19 +77,25 @@ public class Team implements Comparable{
     }
 
     public int getGoalsRecived() {
-        return goalsRecived;
+        return goalsReceived;
     }
 
     public int getGoalDifference(){
         int goalDifference;
-        goalDifference = this.goalsShot - this.goalsRecived;
+        goalDifference = this.goalsShot - this.goalsReceived;
 
         return goalDifference;
     }
 
-    public int compareTo(Object o){
-        Team otherTeam = (Team) o;
-        return otherTeam.points - this.points;
+    @Override
+    public int compareTo(Team team) {
+        if (points > team.getPoints()) {
+            return 1;
+        } else if (points < team.getPoints()) {
+            return -1;
+        } else {
+            return Integer.compare(getGoalDifference(), team.getGoalDifference());
+        }
     }
 
 }
